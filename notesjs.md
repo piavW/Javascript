@@ -289,35 +289,77 @@ We use .prototype to group methods together, not unlike a Ruby class.
 JAVASCRIPT "CLASSES"
 JavaScript doesn’t have formal class notation, but you can create a “constructor” and add methods to it. Examples from here.
 
-function Person(first, last) { 
-    // create "constructor"
-    this.first = first;        
-    // public variables -- reference current object
-    this.last = last;
-
-    let privateFn = function(first, last){  
-    // private function
-    }
-
-    this.setName = function(first, last){ 
-        // public function
-        this.first = first;
+example:
+    function Person(first, last) { 
+        // create "constructor"
+        this.first = first;        
+        // public variables -- reference current object
         this.last = last;
+
+        let privateFn = function(first, last){  
+        // private function
+        }
+
+        this.setName = function(first, last){ 
+            // public function
+            this.first = first;
+            this.last = last;
+        }
     }
 
+    Person.prototype.fullName = function() { 
+        // extend prototype
+        return this.first + ' ' + this.last; 
+        // even at runtime!
+    }
+
+    let bob = new Person("Anna", "Andersson"); 
+        // "new" creates an object
+    bob.fullName();               
+        // "Thomas Ochman"
+
+Explanation of "this" keyword: https://www.reddit.com/r/javascript/comments/6bffg4/understanding_the_this_keyword_in_javascript/
+To find out what "this" is, look at when the this was invoked. According to implicit binding rule, the you use a function invoking this, look to the left of that function to see what "this" is referring to. 
+
+IMPLICIT BINDING Below we've created the object stacey and a sayName method/function within that object.
+```js
+let stacey = {
+    name: 'Stacey',
+    age:34,
+    sayName:  function(){
+        console.log('My name is ' + this.name);
+    }
+};
+
+stacey.sayName(); //this calls/invokes the sayName-function. 
+``` 
+EXPLICIT BINDING To call a function that isn't within the object, use the .call() 
+example:
+```js
+sayName:  function(){
+        console.log('My name is ' + this.name);
 }
 
-Person.prototype.fullName = function() { 
-    // extend prototype
-    return this.first + ' ' + this.last; 
-    // even at runtime!
-}
+let stacey = {
+    name: 'Stacey',
+    age:34,
+};
 
-let bob = new Person("Anna", "Andersson"); 
-    // "new" creates an object
-bob.fullName();               
-    // "Thomas Ochman"
+sayName.call(stacey);
+``` 
+With .call() you have to add in the arguments one by one (så om du hämtar från an array måste du skriva myArray[0], myArray[1] etc).
+With .apply you pass in the arguments as an array (so it takes everything in your myArray). 
+.bind returns a new function instead of invoking an already existing function like .call. 
 
+Misc. info:
+
+eval("x = 3");       // execute arbitrary code
+
+timer = setTimeout("myfunction()", 1000)  
+    // execute in 1 second (1000ms)
+
+clearTimeout(timer);             
+    // cancel event
 
 JAVASCRIPT DEMO: 
 To give a html node (like h1) an id you can access it in js. So in html <h1 id=“greeting”> “Hello” </h1> in script: Let greetingElement = document.getElementById(‘greeting’) . Now the h1 id is stored in a variable called greetingElement
